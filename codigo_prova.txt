@@ -1,0 +1,69 @@
+//IMPORTAR O EXPRESS - TECNOLOGIA BACKEND PARA JAVASCRIPT
+const express = require("express");
+const { json } = require("express/lib/response");
+
+//APP TEM TODAS AS FUNCIONALIDADES DO EXPRESS
+const app = express();
+
+//VOU CHAMAR, INVOCAR OU RODAR A FUNÇÃO QUE RODA O MEU PROJETO BACKEND
+app.listen(8080, () => {
+    console.log("servidor iniciado")
+});
+//rota - get - apresenta uma informação / traz as informações
+//requisição e a resposta
+app.get("/", (req, res) => {
+    //retornar uma resposta
+    res.send("Seja bem vindo(a)!")
+});
+
+let cliente1 = { nome: "Aryel", email: "aryel@gmail.com" }
+let cliente2 = { nome: "Rayssa", email: "rayssa@gmail.com" }
+let cliente3 = { nome: "Gabriel", email: "gabriel@gmail.com" }
+
+let clientes = [cliente1, cliente2, cliente3]
+
+app.get("/listarclientes", (req, res) => {
+    // let empresa = {nome: "2I", idade:2}
+    //json retorna um objeto
+    return res.json(clientes)
+});
+
+app.get("/buscar", (req, res) => {
+    //recupera da tela o que foi digitado na url
+    const nome = req.query.nome;
+
+    let filtro = clientes.filter((e) => e.nome == nome);
+
+    return res.json(
+        filtro
+    );
+});
+//resposta é o que entrego para o usuário - requisito é o que eu pego de la
+app.post("/salvar", (req, res) => {
+    //desestruturar as informações
+    const nome = req.body.nome;
+    const email = req.body.email;
+    let clienteRecebido = { nome, email };
+    clientes.push(clienteRecebido);
+    return res.json(clientes);
+});
+
+
+app.put("/editar/:nome", (req, res) => {
+    const parametro = req.params.nome;
+    //pego todos os dados dos campos 
+    const { email, nome } = req.body;
+    //crio um objeto com os valores passados 
+    let objeto = { nome, email }
+    //atualizo o valor que está naquela posição
+    let posicao = clientes.findIndex(el => el.nome == nome);
+    clientes[posicao] = objeto;
+    return res.json(clientes)
+});
+
+app.delete("/deletar/:nome", (req, res)=>{
+    const parametro = req.params.nome;
+    let posicao = clientes.findIndex(el => el. nome == nome);
+    clientes.splice(posicao, 1);
+    res.send("Apagado  com sucesso");
+});
